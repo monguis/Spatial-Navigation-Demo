@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import axios from "axios"
+
+axios.get('/').then((data) =>{
+  console.log(data);
+})
 
 class App extends Component {
   render() {
