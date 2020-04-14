@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
-
+import API from "../../utilities/API"
 // let arrayee1 = [1, 2, 3, 4, 5, 6, 7];
 // let arrayee2 = [11, 12, 13, 14, 15, 16, 17];
 // let arrayee3 = [21, 22, 23, 24, 25, 26, 27];
@@ -8,19 +8,66 @@ import logo from "./logo.svg";
 // let menuMatrix = [arrayee1, arrayee2, arrayee3, arrayee4]
 
 
-const menuUp = () => {
+//here we sort movies based on an attribute that we considered the most relevant
+// sortedMovies = (relevance) => {
+//   let auxArr;
+//   API.getMovies().then(({ data }) => {
+//     if (data[0][relevance]) {
+//       if (+data[0][relevance]) {
+//         auxArr = data.sort((a, b) => b[relevance] - a[relevance]);
+//       } else {
+//         auxArr = data.sort((a, b) => b[relevance] < a[relevance]);
+//       }
+//       console.log(auxArr);
+//     } else{ 
+//       console.log("Movies can't be sorted by that attribute");
+//   }
+//   });
+// }
+// ["Top of 2019","Top of 2018","Mystery ","Drama","Action","Fantasy","Thriller"]
 
-}
+const renderMenu = (sections) => {}
 
-const menuDown = () => {
 
-}
+
+
+
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {menu:[[1, 2, 3, 4, 5, 6, 7],[11, 12, 13, 14, 15, 16, 17], [21, 22, 23, 24, 25, 26, 27],[31, 32, 33, 34, 35, 36, 37]]}
   }
+
+  componentDidMount(){
+    this.sortedMovies("imdbRating");
+    this.generateCategoriesLite([{catName:"2019"},{catName:"asdasd"}]);
+  }
+generateCategoriesLite = (categories,size) =>{
+  let menuMatrix = []
+  for(const category of categories){
+    menuMatrix.push({
+      catName:category.catName,
+      members:[]
+    });
+  }
+  console.log(menuMatrix)
+}
+  //here we sort movies based on an attribute that we considered the most relevant
+sortedMovies = (relevance) => {
+  let auxArr;
+  API.getMovies().then(({ data }) => {
+    if (data[0][relevance]) {
+      if (+data[0][relevance]) {
+        auxArr = data.sort((a, b) => b[relevance] - a[relevance]);
+      } else {
+        auxArr = data.sort((a, b) => b[relevance] < a[relevance]);
+      }
+    } else{ 
+      console.log("Movies can't be sorted by that attribute");
+  }
+  });
+}
 
   menuBack = () => {
     var auxArr = this.state.menu;
