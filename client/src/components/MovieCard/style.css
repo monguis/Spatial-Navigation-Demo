@@ -1,8 +1,20 @@
-.grow {
-    transition: all 0.2s ease-in-out;
-}
+/* .selectable {
+    
+    display: inline-block;
+} */
 
 .selected {
-    transform: scale(1.2);
+    transform: scale(1.1);
     border: white,5px,solid;
+    
 }
+
+.selectableWrapper{
+    display: inline-block;
+    margin-left:10px;
+    transition: all 0.2s ease-in-out;
+    width:17vw;
+    margin:10px;
+}
+
+  

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import API from "../../utilities/API"
 import MenuSlider from "../../components/MenuSlider";
+import ScrollSpyPage from "../../pages/Test"
 // let arrayee1 = [1, 2, 3, 4, 5, 6, 7];
 // let arrayee2 = [11, 12, 13, 14, 15, 16, 17];
 // let arrayee3 = [21, 22, 23, 24, 25, 26, 27];
@@ -125,6 +126,7 @@ sortedMovies = (relevance) => {
         <button onClick={() => { this.menuBack() }}>back</button>
 
         <MenuSlider items={this.state.menu[1]}/>
+        <ScrollSpyPage/>
       </div>
     );
   }
