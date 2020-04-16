@@ -1,16 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from 'react-bootstrap';
 import MovieCard from "../MovieCard/"
 import "./style.css";
+import Scrollspy from 'react-scrollspy';
+import useEventListener from '../../utilities/useEventListener'
 
 const MenuSlider = (props) => {
 
     const [focus, setFocus] = useState(
         {
-            menuFocus: true,
-            itemFocus: 0
+            menuFocus: props.active,
+            itemFocus: 0,
+            menuItems: props.items
         });
-    const { itemFocus, menuFocus } = focus;
+
+
+    const { itemFocus, menuFocus, menuItems } = focus;
+
+    useEffect(() => {document.location.href = "#" + (itemFocus);}, [itemFocus])
 
     const getFocus = () => {
         setFocus({ ...focus, menuFocus: true });
@@ -22,62 +29,59 @@ const MenuSlider = (props) => {
 
     const moveForward = () => {
         if (itemFocus < props.items.length - 1 && menuFocus) {
-            setFocus({ ...focus, itemFocus: itemFocus + 1 })
+            setFocus({ ...focus, itemFocus: itemFocus + 1 });
+            // 
         }
     }
 
     const moveBack = () => {
         if (itemFocus > 0 && menuFocus) {
-            setFocus({ ...focus, itemFocus: itemFocus - 1 })
+            setFocus({ ...focus, itemFocus: itemFocus - 1 });
+            // document.location.href = "#" + (itemFocus);
         }
     }
 
 
     // && (itemFocus + 6 > index )
     // index >= itemFocus
+
+const ESCAPE_KEYS = ['27', 'Escape'];
+
+
+  function handler( event ) {
+      const {key} = event
+      if(String(key)!=="F5"&&menuFocus){
+          console.log(String(key))
+        switch(String(key)){
+            case "ArrowRight":
+                moveForward();
+            break;
+            case "ArrowLeft":
+                moveBack();
+            break;
+            default:
+        }
+
+    event.preventDefault();
+    event.stopPropagation();
+    if (ESCAPE_KEYS.includes(String(key))) {
+      console.log('Escape key pressed!');
+    }}
+  }
+
+  useEventListener('keydown', handler);
+
+
     return (<Container fluid >
+            <Scrollspy currentClassName="selected">
         <Row>
             <h3 style={{ margin: "0 auto" }}>{`${itemFocus} + ${itemFocus + 6}`}</h3>
         </Row>
-        {/* <Row style={{ margin: "0 auto" }} className="bg-success menuContentBar"> */}
-        {/* {props.items.map((element, index) => <MovieCard show={ (index >= itemFocus||itemFocus-index >0) &&itemFocus + 6 > index} class={`${menuFocus ? `${index === itemFocus ? "selected" : ""}` : ""}`} />)} */}
-
-        {/* <MovieCard src={"https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg"} class="d-none" id = "0"/>
-    
-    
-    <MovieCard id = "0" class="selected"/>
-    
-    
-    <MovieCard id = "0"/>
-    
-    
-    <MovieCard id = "0"/>
-    
-    
-    <MovieCard id = "0"/>
-    
-    
-    <MovieCard id = "0"/>
-    
-    
-    <MovieCard id = "0"/>
-    
-     
-    <MovieCard src={"https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg"}/> */}
-
-        {/* </Row> */}
 
         <div className="scrollmenu d-flex align-items-center">
-            {props.items.map((element, index) => <MovieCard class={`${menuFocus ? `${index === itemFocus ? "selected" : ""}` : ""}`} />)}
+            {menuItems.map((element, index) => <MovieCard id={index} class={`${menuFocus ? `${index === itemFocus ? "selected" : ""}` : ""}`} />)}
         </div>
-        <button onClick={() => { getFocus() }}>attention</button>
-        <button onClick={() => { looseFocus() }}>kisses bye</button>
-        <button onClick={() => { }}>up</button>
-        <button onClick={() => { }}>down</button>
-        <button onClick={() => { moveForward() }}>forward</button>
-        <button onClick={() => { moveBack() }}>back</button>
-
-
+            </Scrollspy>
     </Container>);
 }
 
