@@ -3,7 +3,6 @@ import { Container, Row, Col } from 'react-bootstrap';
 import MovieCard from "../MovieCard/"
 import "./style.css";
 import Scrollspy from 'react-scrollspy';
-import useEventListener from '../../utilities/useEventListener'
 
 const MenuSlider = (props) => {
 
@@ -17,7 +16,16 @@ const MenuSlider = (props) => {
 
     const { itemFocus, menuFocus, menuItems } = focus;
 
-    useEffect(() => {document.location.href = "#" + (itemFocus);}, [itemFocus])
+    useEffect(() => {
+        document.location.href = "#" + (itemFocus);
+        document.location.href = "#" + ("title")
+    }, [itemFocus])
+
+    useEffect(() => {
+
+        if(menuFocus)
+        console.log("si jalo wey")
+    }, [menuFocus])
 
     const getFocus = () => {
         setFocus({ ...focus, menuFocus: true });
@@ -27,55 +35,25 @@ const MenuSlider = (props) => {
         setFocus({ ...focus, menuFocus: false });
     }
 
-    const moveForward = () => {
+    const moveForward = (e) => {
+
         if (itemFocus < props.items.length - 1 && menuFocus) {
             setFocus({ ...focus, itemFocus: itemFocus + 1 });
             // 
         }
     }
 
-    const moveBack = () => {
+    const moveBack = (e) => {
         if (itemFocus > 0 && menuFocus) {
             setFocus({ ...focus, itemFocus: itemFocus - 1 });
-            // document.location.href = "#" + (itemFocus);
         }
     }
-
-
-    // && (itemFocus + 6 > index )
-    // index >= itemFocus
-
-const ESCAPE_KEYS = ['27', 'Escape'];
-
-
-  function handler( event ) {
-      const {key} = event
-      if(String(key)!=="F5"&&menuFocus){
-          console.log(String(key))
-        switch(String(key)){
-            case "ArrowRight":
-                moveForward();
-            break;
-            case "ArrowLeft":
-                moveBack();
-            break;
-            default:
-        }
-
-    event.preventDefault();
-    event.stopPropagation();
-    if (ESCAPE_KEYS.includes(String(key))) {
-      console.log('Escape key pressed!');
-    }}
-  }
-
-  useEventListener('keydown', handler);
 
 
     return (<Container fluid >
             <Scrollspy currentClassName="selected">
         <Row>
-            <h3 style={{ margin: "0 auto" }}>{`${itemFocus} + ${itemFocus + 6}`}</h3>
+            <h3 id={"title"} style={{ margin: "0 auto" }}>{`${itemFocus} + ${itemFocus + 6}`}</h3>
         </Row>
 
         <div className="scrollmenu d-flex align-items-center">

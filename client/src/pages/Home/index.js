@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import logo from "./logo.svg";
+import React, { useState, useEffect, useRef } from "react";
 import API from "../../utilities/API"
 import MenuSlider from "../../components/MenuSlider";
+import useEventListener from '../../utilities/useEventListener';
 
 // let arrayee1 = [1, 2, 3, 4, 5, 6, 7];
 // let arrayee2 = [11, 12, 13, 14, 15, 16, 17];
@@ -30,78 +30,71 @@ import MenuSlider from "../../components/MenuSlider";
 
 
 
+// const ESCAPE_KEYS = ['27', 'Escape'];
 
 
+//   function handler( event ) {
+//       const {key} = event
+//       if(String(key)!=="F5"&&menuFocus){
+//           console.log(String(key))
+//         switch(String(key)){
+//             case "ArrowRight":
+//                 moveForward();
+//             break;
+//             case "ArrowLeft":
+//                 moveBack();
+//             break;
+//             default:
+//         }
+
+//     event.preventDefault();
+//     event.stopPropagation();
+//     if (ESCAPE_KEYS.includes(String(key))) {
+//       console.log('Escape key pressed!');
+//     }}
+//   }
+
+//   useEventListener('keydown', handler);
+
+
+// const sortedMovies = (relevance) => {
+//   let auxArr;
+//   API.getMovies().then(({ data }) => {
+//     if (data[0][relevance]) {
+//       if (+data[0][relevance]) {
+//         auxArr = data.sort((a, b) => b[relevance] - a[relevance]);
+//       } else {
+//         auxArr = data.sort((a, b) => b[relevance] < a[relevance]);
+//       }
+//     } else {
+//       console.log("Movies can't be sorted by that attribute");
+//     }
+//   });
+// }
 
 
 const Home = (props) => {
+
+  const menuRef = useRef();
+
+  // useEventListener('keydown', rehandler);
   
-  
-  const  [menu,setMenu] = useState([[1, 2, 3, 4, 5, 6, 7], [11, 12, 13, 14, 15, 16, 17, 18, 19],
-    [21, 22, 23, 24, 25, 26, 27], [31, 32, 33, 34, 35, 36, 37]])
-    
-    const renderMenu = () => {return (menu.map((subMenu, index) => <MenuSlider items={subMenu} active={index === 0} />))};
+  const [menu, setMenu] = useState({ selected: 1, menuGrid: [{ category: "2019", items: [1, 2, 3] }, { category: "2018", items: [1, 2, 3, 4, 5, 6, 7] }, { category: "2017", items: [1, 2, 3, 4, 5, 6, 7] }, { category: "2016", items: [1, 2, 3, 4, 5, 6, 7] }] })
 
-  useEffect(() => {
-    sortedMovies("imdbRating");
-    generateCategoriesLite([{ catName: "2019" }, { catName: "asdasd" }]);
-  },[]);
-
-  const generateCategoriesLite = (categories, size) => {
-    let menuMatrix = []
-    for (const category of categories) {
-      menuMatrix.push({
-        catName: category.catName,
-        members: []
-      });
-    }
-    console.log(menuMatrix)
-  }
-  //here we sort movies based on an attribute that we considered the most relevant
-  const sortedMovies = (relevance) => {
-    let auxArr;
-    API.getMovies().then(({ data }) => {
-      if (data[0][relevance]) {
-        if (+data[0][relevance]) {
-          auxArr = data.sort((a, b) => b[relevance] - a[relevance]);
-        } else {
-          auxArr = data.sort((a, b) => b[relevance] < a[relevance]);
-        }
-      } else {
-        console.log("Movies can't be sorted by that attribute");
-      }
-    });
-  }
-  const menuDown = () => {
-    var auxArr = menu;
-    auxArr.push(auxArr.shift());
-    setMenu(auxArr);
+  const selectedPlus = () => {
+    setMenu({ ...menu, selected: 0 })
   }
 
-  const menuUp = () => {
-    var auxArr = menu;
-    auxArr.unshift(auxArr.pop());
-    setMenu(auxArr);
-    console.log(menu)
-  }
 
-    return (<div className="App">
-      <div className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h2>Welcome to React</h2>
-      </div>
-      <p className="App-intro">
-        To get started, edit <code>src/App.js</code> and save to reload.
-          </p>
 
-      {renderMenu()}
+  return (
+    <>
+      {menu.menuGrid.map((subMenu, index) => <MenuSlider items={subMenu.items} active={index === menu.selected} />)}
+      <button onClick={() => { selectedPlus() }}>selected+1</button>
+    </>
+  )
 
-      <button onClick={() => { menuUp() }}>up</button>
-      <button onClick={() => { menuDown() }}>down</button>
 
-    </div>)
-
-  
 }
 
 export default Home;
