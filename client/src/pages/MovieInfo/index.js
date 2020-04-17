@@ -1,32 +1,39 @@
-import React from "react";
-import { Container, Row, Col,Image  } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Image } from 'react-bootstrap';
 
 const MovieInfo = (props) => {// 1000 picture width
 
+    const [movie, setMovie] = useState()
+
+console.log(props.test)
+
+    useEffect(() => {
+        console.log("Holi");
+    }, [])
     return (
         <Container fluid>
             <Row>
-                <Col xs={4}>                                                
-                    <Image src="https://m.media-amazon.com/images/M/MV5BOTdmNTFjNDEtNzg0My00ZjkxLTg1ZDAtZTdkMDc2ZmFiNWQ1XkEyXkFqcGdeQXVyNTAzNzgwNTg@._V1_SX1000.jpg" fluid/>
+                <Col xs={4}>
+                    <Image src="https://m.media-amazon.com/images/M/MV5BOTdmNTFjNDEtNzg0My00ZjkxLTg1ZDAtZTdkMDc2ZmFiNWQ1XkEyXkFqcGdeQXVyNTAzNzgwNTg@._V1_SX1000.jpg" fluid />
                 </Col>
                 <Col>
-                <h1>Title</h1>
-                <h3>Genres, ReleaseDate, Duration, Rated </h3>
-                <button>favorited?</button>
-                <br></br><br></br><br></br>
-                <h3>PLot</h3>
-                <p>loremljafjlkasdfl;khasd;fkhalfjdkhgvaslhdvaslhkfdvhsldgfhvlbalfhvlkasflkhilvkhslhdfbhsifvlhafkdjvblsfdjbkvlsnljfdv</p>
-                <h3>Directed by:</h3>
-                <p>loremljafjlkasdfl;khasd;fkhalfjdkhgvaslhdvaslhkfdvhsldgfhvlbalfhvlkasflkhilvkhslhdfbhsifvlhafkdjvblsfdjbkvlsnljfdv</p>
-                <h3>production</h3>
-                <p>loremljafjlkasdfl;khasd;fkhalfjdkhgvaslhdvaslhkfdvhsldgfhvlbalfhvlkasflkhilvkhslhdfbhsifvlhafkdjvblsfdjbkvlsnljfdv</p>
-                <h3>Starring</h3>
-                <ul>
-                    <li>1</li>
-                    <li>2</li>
-                    <li>3</li>
-                    <li>4</li>
-                </ul>
+                    <h1>Title</h1>
+                    <h3>Genres, ReleaseDate, Duration, Rated </h3>
+                    <button>favorited?</button>
+                    <br></br><br></br><br></br>
+                    <h3>PLot</h3>
+                    <p>loremljafjlkasdfl;khasd;fkhalfjdkhgvaslhdvaslhkfdvhsldgfhvlbalfhvlkasflkhilvkhslhdfbhsifvlhafkdjvblsfdjbkvlsnljfdv</p>
+                    <h3>Directed by:</h3>
+                    <p>loremljafjlkasdfl;khasd;fkhalfjdkhgvaslhdvaslhkfdvhsldgfhvlbalfhvlkasflkhilvkhslhdfbhsifvlhafkdjvblsfdjbkvlsnljfdv</p>
+                    <h3>production</h3>
+                    <p>loremljafjlkasdfl;khasd;fkhalfjdkhgvaslhdvaslhkfdvhsldgfhvlbalfhvlkasflkhilvkhslhdfbhsifvlhafkdjvblsfdjbkvlsnljfdv</p>
+                    <h3>Starring</h3>
+                    <ul>
+                        <li>1</li>
+                        <li>2</li>
+                        <li>3</li>
+                        <li>4</li>
+                    </ul>
                 </Col>
             </Row>
         </Container>

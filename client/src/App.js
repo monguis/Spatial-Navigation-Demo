@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MovieInfo from "./pages/MovieInfo";
-import API from "./utilities/API"
+import API from "./utilities/API";
+import Test from "./pages/Test"
 
 function App() {
   return (

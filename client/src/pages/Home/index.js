@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Redirect } from "react-router-dom";
 import API from "../../utilities/API";
 import { Container } from "react-bootstrap"
 import MenuSlider from "../../components/MenuSlider";
 import useEventListener from '../../utilities/useEventListener';
 import "./style.css";
-// let arrayee1 = [1, 2, 3, 4, 5, 6, 7];
-// let arrayee2 = [11, 12, 13, 14, 15, 16, 17];
-// let arrayee3 = [21, 22, 23, 24, 25, 26, 27];
-// let arrayee4 = [31, 32, 33, 34, 35, 36, 37];
-// let menuMatrix = [arrayee1, arrayee2, arrayee3, arrayee4]
+
 
 
 //here we sort movies based on an attribute that we considered the most relevant
@@ -31,31 +28,7 @@ import "./style.css";
 
 
 
-// const ESCAPE_KEYS = ['27', 'Escape'];
 
-
-//   function handler( event ) {
-//       const {key} = event
-//       if(String(key)!=="F5"&&menuFocus){
-//           console.log(String(key))
-//         switch(String(key)){
-//             case "ArrowRight":
-//                 moveForward();
-//             break;
-//             case "ArrowLeft":
-//                 moveBack();
-//             break;
-//             default:
-//         }
-
-//     event.preventDefault();
-//     event.stopPropagation();
-//     if (ESCAPE_KEYS.includes(String(key))) {
-//       console.log('Escape key pressed!');
-//     }}
-//   }
-
-//   useEventListener('keydown', handler);
 
 
 // const sortedMovies = (relevance) => {
@@ -77,90 +50,122 @@ import "./style.css";
 
 const Home = (props) => {
 
-  const [menu, setMenu] = useState({ selected: [0, 0], previous: [], menuGrid: [] })
+  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], redirect: false })
 
   useEffect(() => {
     API.getMovies().then(({ data }) => {
       setMenu({ ...menu, menuGrid: [{ title: "array 1", items: data.slice(1, 11) }, { title: "array 2", items: data.slice(21, 31) }, { title: "array 3", items: data.slice(31, 41) }] });
-
+      window.location.hash = "#" + selected.x + "," + selected.y;
+      window.location.hash = "#row" + selected.x;
     });
-
   }, [])
-
-  console.log(menu.menuGrid)
 
   useEffect(() => {
     if (menuGrid.length > 0) {
-      console.log(previous.join(","))
-      if (previous.length > 0) {
-        document.getElementById(previous.join(",")).classList.remove("selectedItem");
-      }
-      console.log(selected.join(","))
-      document.getElementById(selected.join(",")).classList.add("selectedItem")
-      window.location.hash = `#row${selected[0]}`
-      window.location.hash = "#"+selected.join(",");
+      console.log(previous)
+      console.log(selected)
+      document.getElementById(previous.x + "," + previous.y).classList.remove("selectedItem");
+      document.getElementById(selected.x + "," + selected.y).classList.add("selectedItem");
+      window.location.hash = "#" + selected.x + "," + selected.y;
+      window.location.hash = "#row" + selected.y;
     }
   }, [menu])
 
   const { selected, menuGrid, previous } = menu
-  // useEffect(() => {
-  //   console.log("changed "+ (0 === menu.selected))
 
-  // }, [menu.menuGrid])
+  const validKeys = ['ArrowDown', 37, "ArrowUp", 38, "ArrowRight", 39, "ArrowLeft", 40, 13, "Enter"];
 
-  //   const selectedPlus = () => {
-  //     setMenu({ ...menu, selected: 0 })
-  //   }
+
+  function handler(event) {
+    const { key } = event
+    console.log(String(key))
+    if (validKeys.includes(String(key))) {
+      switch (String(key)) {
+        case "ArrowRight":
+          moveForward();
+          break;
+        case "ArrowLeft":
+          moveBack();
+          break;
+        case "ArrowUp":
+          moveUp();
+          break;
+        case "ArrowDown":
+          moveDown();
+          break;
+        case "Enter":
+          setMenu({ ...menu, redirect: true })
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+  useEventListener('keydown', handler);
+
+
 
   const moveUp = () => {
-    setMenu({
-      ...menu,
-      previous: selected,
-      selected: [selected[0] - 1, selected[1]]
-    })
+    if (selected.y > 0) {
+      setMenu({
+        ...menu,
+        previous: selected,
+        selected: { ...selected, y: selected.y - 1 }
+      })
+    }
   }
 
   const moveDown = () => {
-    setMenu({
-      ...menu,
-      previous: selected,
-      selected: [selected[0] + 1, selected[1]]
-    })
+    if (selected.y < menuGrid.length - 1) {
+      setMenu({
+        ...menu,
+        previous: selected,
+        selected: { ...selected, y: selected.y + 1 }
+      })
+    }
   }
 
   const moveForward = () => {
-    setMenu({
-      ...menu,
-      previous: selected,
-      selected: [selected[0], selected[1] + 1]
-    })
+    if (selected.x < menuGrid[selected.y].items.length - 1) {
+      setMenu({
+        ...menu,
+        previous: selected,
+        selected: { ...selected, x: selected.x + 1 }
+      })
+    }
   }
 
   const moveBack = () => {
-    setMenu({
-      ...menu,
-      previous: selected,
-      selected: [selected[0], selected[1] - 1]
-    })
+    if (selected.x > 0) {
+      setMenu({
+        ...menu,
+        previous: selected,
+        selected: { ...selected, x: selected.x - 1 }
+      })
+    }
   }
 
+
+  const renderRedirect = () => {
+    if (menu.redirect) {
+      return <Redirect to={{ pathname: '/movie', test: "holi" } } />
+    }
+  }
   return (
-    <Container fluid>
-      {/* {<MenuSlider category={index} items={subMenu} ref={menu.selected === index ? menuRef:null } />)}
-      
-      <button onClick={() => { selectedPlus() }}>selected+1</button>  */}
+    <>
+      {renderRedirect()}
 
-      {menuGrid.map((el, row) => <MenuSlider items={el.items} category={el.title} row={row} />)}
+      <Container fluid>
 
-      <button onClick={() => { moveUp() }}>up</button>
-      <button onClick={() => { moveDown() }}>down</button>
-      <button onClick={() => { moveForward() }}>forward</button>
-      <button onClick={() => { moveBack() }}>back</button>
-    </Container>
+        {menuGrid.map((el, row) => <MenuSlider items={el.items} category={el.title} row={row} />)}
+
+      </Container>
+    </>
   )
 
 
 }
 
 export default Home;
-
