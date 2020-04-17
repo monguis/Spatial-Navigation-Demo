@@ -5,6 +5,7 @@ import { Container } from "react-bootstrap"
 import MenuSlider from "../../components/MenuSlider";
 import useEventListener from '../../utilities/useEventListener';
 import "./style.css";
+import MovieInfo from "../MovieInfo/"
 
 
 
@@ -61,7 +62,7 @@ const Home = (props) => {
   }, [])
 
   useEffect(() => {
-    if (menuGrid.length > 0) {
+    if (menuGrid.length > 0 && !menu.redirect) {
       console.log(previous)
       console.log(selected)
       document.getElementById(previous.x + "," + previous.y).classList.remove("selectedItem");
@@ -69,16 +70,16 @@ const Home = (props) => {
       window.location.hash = "#" + selected.x + "," + selected.y;
       window.location.hash = "#row" + selected.y;
     }
+
   }, [menu])
 
   const { selected, menuGrid, previous } = menu
 
-  const validKeys = ['ArrowDown', 37, "ArrowUp", 38, "ArrowRight", 39, "ArrowLeft", 40, 13, "Enter"];
+  const validKeys = ['ArrowDown', 37, "ArrowUp", 38, "ArrowRight", 39, "ArrowLeft", 40, 13, "Enter", "Escape", 27];
 
 
   function handler(event) {
     const { key } = event
-    console.log(String(key))
     if (validKeys.includes(String(key))) {
       switch (String(key)) {
         case "ArrowRight":
@@ -95,6 +96,9 @@ const Home = (props) => {
           break;
         case "Enter":
           setMenu({ ...menu, redirect: true })
+          break;
+        case "Escape":
+          backToMenu()
           break;
         default:
           return;
@@ -147,21 +151,35 @@ const Home = (props) => {
     }
   }
 
+  const backToMenu = () => {
+    if(menu.redirect){
+      setMenu({...menu,redirect:false});
+    }
+   };
 
   const renderRedirect = () => {
     if (menu.redirect) {
-      return <Redirect to={{ pathname: '/movie', test: "holi" } } />
+      return <MovieInfo movie={menuGrid[selected.y].items[selected.x]} />
     }
   }
   return (
     <>
-      {renderRedirect()}
 
-      <Container fluid>
+      {menu.redirect ? (
 
-        {menuGrid.map((el, row) => <MenuSlider items={el.items} category={el.title} row={row} />)}
+        <Container fluid>
 
-      </Container>
+          <MovieInfo movie={menuGrid[selected.y].items[selected.x]} />
+
+        </Container>)
+
+        : (
+
+          <Container fluid>
+
+            {menuGrid.map((el, row) => <MenuSlider items={el.items} category={el.title} row={row} />)}
+
+          </Container>)}
     </>
   )
 

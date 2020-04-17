@@ -3,10 +3,10 @@ import { Container, Row, Col, Image } from 'react-bootstrap';
 
 const MovieInfo = (props) => {// 1000 picture width
 
-    const [movie, setMovie] = useState()
+    console.log(props.movie)
 
-console.log(props.test)
-
+    const { movie } = props;
+    // console.log(p.replace(regex, 'ferret'));
     useEffect(() => {
         console.log("Holi");
     }, [])
@@ -14,25 +14,22 @@ console.log(props.test)
         <Container fluid>
             <Row>
                 <Col xs={4}>
-                    <Image src="https://m.media-amazon.com/images/M/MV5BOTdmNTFjNDEtNzg0My00ZjkxLTg1ZDAtZTdkMDc2ZmFiNWQ1XkEyXkFqcGdeQXVyNTAzNzgwNTg@._V1_SX1000.jpg" fluid />
+                    <Image src={movie.Poster.replace("SX300.jpg","SX1000.jpg")} fluid />
                 </Col>
                 <Col>
-                    <h1>Title</h1>
-                    <h3>Genres, ReleaseDate, Duration, Rated </h3>
+                    <h1>{movie.Title}</h1>
+                    <h3>{`${movie.Genre}, ${movie.Released}, ${movie.Runtime}, ${movie.imdbRating}, ${movie.DVD}`} </h3>
                     <button>favorited?</button>
                     <br></br><br></br><br></br>
-                    <h3>PLot</h3>
-                    <p>loremljafjlkasdfl;khasd;fkhalfjdkhgvaslhdvaslhkfdvhsldgfhvlbalfhvlkasflkhilvkhslhdfbhsifvlhafkdjvblsfdjbkvlsnljfdv</p>
+                    <h3>Plot</h3>
+                    <p>{movie.Plot}</p>
                     <h3>Directed by:</h3>
-                    <p>loremljafjlkasdfl;khasd;fkhalfjdkhgvaslhdvaslhkfdvhsldgfhvlbalfhvlkasflkhilvkhslhdfbhsifvlhafkdjvblsfdjbkvlsnljfdv</p>
-                    <h3>production</h3>
-                    <p>loremljafjlkasdfl;khasd;fkhalfjdkhgvaslhdvaslhkfdvhsldgfhvlbalfhvlkasflkhilvkhslhdfbhsifvlhafkdjvblsfdjbkvlsnljfdv</p>
+                    <p>{movie.Director}</p>
+                    <h3>Production</h3>
+                    <p>{movie.Production}</p>
                     <h3>Starring</h3>
                     <ul>
-                        <li>1</li>
-                        <li>2</li>
-                        <li>3</li>
-                        <li>4</li>
+                        {movie.Actors.split(", ").map(actor => <li>{actor}</li>)}
                     </ul>
                 </Col>
             </Row>
