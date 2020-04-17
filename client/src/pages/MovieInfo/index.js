@@ -18,7 +18,7 @@ const MovieInfo = (props) => {// 1000 picture width
                 </Col>
                 <Col>
                     <h1>{movie.Title}</h1>
-                    <h3>{`${movie.Genre}, ${movie.Released}, ${movie.Runtime}, ${movie.imdbRating}, ${movie.DVD}`} </h3>
+                    <h3>{`${movie.Genre}, ${movie.Released}, ${movie.Runtime}, ${movie.imdbRating}, ${movie.Rated}`} </h3>
                     <button>favorited?</button>
                     <br></br><br></br><br></br>
                     <h3>Plot</h3>

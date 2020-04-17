@@ -51,8 +51,9 @@ import MovieInfo from "../MovieInfo/"
 
 const Home = (props) => {
 
-  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], redirect: false })
+  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], redirect: false, favorites: [], favIndex: [] })
 
+  
   useEffect(() => {
     API.getMovies().then(({ data }) => {
       setMenu({ ...menu, menuGrid: [{ title: "array 1", items: data.slice(1, 11) }, { title: "array 2", items: data.slice(21, 31) }, { title: "array 3", items: data.slice(31, 41) }] });
@@ -73,7 +74,7 @@ const Home = (props) => {
 
   }, [menu])
 
-  const { selected, menuGrid, previous } = menu
+  const { selected, menuGrid, previous, favorites, favIndex } = menu
 
   const validKeys = ['ArrowDown', 37, "ArrowUp", 38, "ArrowRight", 39, "ArrowLeft", 40, 13, "Enter", "Escape", 27];
 
@@ -95,7 +96,11 @@ const Home = (props) => {
           moveDown();
           break;
         case "Enter":
+          if(!menu.redirect){
           setMenu({ ...menu, redirect: true })
+        } else {
+          toggleFavorite();
+        }
           break;
         case "Escape":
           backToMenu()
@@ -152,16 +157,16 @@ const Home = (props) => {
   }
 
   const backToMenu = () => {
-    if(menu.redirect){
-      setMenu({...menu,redirect:false});
-    }
-   };
-
-  const renderRedirect = () => {
     if (menu.redirect) {
-      return <MovieInfo movie={menuGrid[selected.y].items[selected.x]} />
+      setMenu({ ...menu, redirect: false });
     }
+  };
+
+  const toggleFavorite = (index) => {
+    
+    setMenu({ ...menu, redirect: false });
   }
+
   return (
     <>
 
@@ -179,6 +184,7 @@ const Home = (props) => {
 
             {menuGrid.map((el, row) => <MenuSlider items={el.items} category={el.title} row={row} />)}
 
+            {favorites.length > 0 ? <MenuSlider items={favorites} category="Favorites" row={menuGrid.length} /> : ""}
           </Container>)}
     </>
   )

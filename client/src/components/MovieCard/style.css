@@ -4,11 +4,19 @@
 }
 
 .selectableWrapper{
+    position: relative;
     display: inline-block;
     margin-left:10px;
     transition: all 0.2s ease-in-out;
     width:20vw;
-    margin:10px;
+    margin:0;
 }
 
-  
+.favorited {
+    position: absolute;
+    top:0.2vw;
+    right:0.4vw;
+    text-align: center;
+    color:red;
+}
+
