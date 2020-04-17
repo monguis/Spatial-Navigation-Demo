@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import API from "../../utilities/API"
+import API from "../../utilities/API";
+import { Container } from "react-bootstrap"
 import MenuSlider from "../../components/MenuSlider";
 import useEventListener from '../../utilities/useEventListener';
-
+import "./style.css";
 // let arrayee1 = [1, 2, 3, 4, 5, 6, 7];
 // let arrayee2 = [11, 12, 13, 14, 15, 16, 17];
 // let arrayee3 = [21, 22, 23, 24, 25, 26, 27];
@@ -73,25 +74,89 @@ import useEventListener from '../../utilities/useEventListener';
 // }
 
 
+
 const Home = (props) => {
 
-  const menuRef = useRef();
+  const [menu, setMenu] = useState({ selected: [0, 0], previous: [], menuGrid: [] })
 
-  // useEventListener('keydown', rehandler);
-  
-  const [menu, setMenu] = useState({ selected: 1, menuGrid: [{ category: "2019", items: [1, 2, 3] }, { category: "2018", items: [1, 2, 3, 4, 5, 6, 7] }, { category: "2017", items: [1, 2, 3, 4, 5, 6, 7] }, { category: "2016", items: [1, 2, 3, 4, 5, 6, 7] }] })
+  useEffect(() => {
+    API.getMovies().then(({ data }) => {
+      setMenu({ ...menu, menuGrid: [{ title: "array 1", items: data.slice(1, 11) }, { title: "array 2", items: data.slice(21, 31) }, { title: "array 3", items: data.slice(31, 41) }] });
 
-  const selectedPlus = () => {
-    setMenu({ ...menu, selected: 0 })
+    });
+
+  }, [])
+
+  console.log(menu.menuGrid)
+
+  useEffect(() => {
+    if (menuGrid.length > 0) {
+      console.log(previous.join(","))
+      if (previous.length > 0) {
+        document.getElementById(previous.join(",")).classList.remove("selectedItem");
+      }
+      console.log(selected.join(","))
+      document.getElementById(selected.join(",")).classList.add("selectedItem")
+      window.location.hash = `#row${selected[0]}`
+      window.location.hash = "#"+selected.join(",");
+    }
+  }, [menu])
+
+  const { selected, menuGrid, previous } = menu
+  // useEffect(() => {
+  //   console.log("changed "+ (0 === menu.selected))
+
+  // }, [menu.menuGrid])
+
+  //   const selectedPlus = () => {
+  //     setMenu({ ...menu, selected: 0 })
+  //   }
+
+  const moveUp = () => {
+    setMenu({
+      ...menu,
+      previous: selected,
+      selected: [selected[0] - 1, selected[1]]
+    })
   }
 
+  const moveDown = () => {
+    setMenu({
+      ...menu,
+      previous: selected,
+      selected: [selected[0] + 1, selected[1]]
+    })
+  }
 
+  const moveForward = () => {
+    setMenu({
+      ...menu,
+      previous: selected,
+      selected: [selected[0], selected[1] + 1]
+    })
+  }
+
+  const moveBack = () => {
+    setMenu({
+      ...menu,
+      previous: selected,
+      selected: [selected[0], selected[1] - 1]
+    })
+  }
 
   return (
-    <>
-      {menu.menuGrid.map((subMenu, index) => <MenuSlider items={subMenu.items} active={index === menu.selected} />)}
-      <button onClick={() => { selectedPlus() }}>selected+1</button>
-    </>
+    <Container fluid>
+      {/* {<MenuSlider category={index} items={subMenu} ref={menu.selected === index ? menuRef:null } />)}
+      
+      <button onClick={() => { selectedPlus() }}>selected+1</button>  */}
+
+      {menuGrid.map((el, row) => <MenuSlider items={el.items} category={el.title} row={row} />)}
+
+      <button onClick={() => { moveUp() }}>up</button>
+      <button onClick={() => { moveDown() }}>down</button>
+      <button onClick={() => { moveForward() }}>forward</button>
+      <button onClick={() => { moveBack() }}>back</button>
+    </Container>
   )
 
 

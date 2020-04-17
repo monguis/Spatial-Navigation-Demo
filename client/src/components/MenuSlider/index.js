@@ -1,66 +1,73 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col } from 'react-bootstrap';
 import MovieCard from "../MovieCard/"
 import "./style.css";
-import Scrollspy from 'react-scrollspy';
+import API from "../../utilities/API"
+import useEventListener from "../../utilities/useEventListener";
 
 const MenuSlider = (props) => {
 
-    const [focus, setFocus] = useState(
-        {
-            menuFocus: props.active,
-            itemFocus: 0,
-            menuItems: props.items
-        });
+
+    const { items, category, row } = props
+    // const [focus, setFocus] = useState(
+    //     {
+    //         menuFocus: true,
+    //         itemFocus: 0,
+    //         menuItems: []
+    //     });
+
+    // const { itemFocus, menuFocus, menuItems } = focus;
+
+    // useEffect(() => {
+    //   setFocus({...focus, menuItems:props.items})
+    // }, [])
+
+    // useEffect(() => {
+    //     window.location.hash = "#itemSelected";
+    //     window.location.hash = `#${props.category}SliderMenuHeader`
+    // }, [itemFocus])
+
+    // useEffect(() => {
+    //     window.location.hash = "#itemSelected";
+    //     window.location.hash = `#${props.category}SliderMenuHeader`
+    // }, [menuFocus])
+
+    // const getFocus = () => {
+    //     setFocus({ ...focus, menuFocus: true });
+    // }
+
+    // const looseFocus = () => {
+    //     setFocus({ ...focus, menuFocus: false });
+    // }
+
+    // const moveForward = () => {
+    //     if (itemFocus < menuItems.length - 1 && menuFocus) {
+    //         setFocus({ ...focus, itemFocus: itemFocus + 1 });
+    //         // 
+    //     }
+    // }
+
+    // const moveBack = () => {
+    //     if (itemFocus > 0 && menuFocus) {
+    //         setFocus({ ...focus, itemFocus: itemFocus - 1 });
+    //         // document.location.href = "#" + (itemFocus);
+    //     }
+    // }
 
 
-    const { itemFocus, menuFocus, menuItems } = focus;
+    // // && (itemFocus + 6 > index )
+    // // index >= itemFocus
+    return (
+        <Container fluid className="SliderMenu">
+            <Row>
+                <h3 id={`row${row}`} style={{ margin: "0 auto" }}>{category}</h3>
+            </Row>
+            <div className="scrollmenu d-flex align-items-center">
+                {items.map((element, index) => <MovieCard src={element.Poster} id={`${row},${index}`} />)}
+            </div>
 
-    useEffect(() => {
-        document.location.href = "#" + (itemFocus);
-        document.location.href = "#" + ("title")
-    }, [itemFocus])
-
-    useEffect(() => {
-
-        if(menuFocus)
-        console.log("si jalo wey")
-    }, [menuFocus])
-
-    const getFocus = () => {
-        setFocus({ ...focus, menuFocus: true });
-    }
-
-    const looseFocus = () => {
-        setFocus({ ...focus, menuFocus: false });
-    }
-
-    const moveForward = (e) => {
-
-        if (itemFocus < props.items.length - 1 && menuFocus) {
-            setFocus({ ...focus, itemFocus: itemFocus + 1 });
-            // 
-        }
-    }
-
-    const moveBack = (e) => {
-        if (itemFocus > 0 && menuFocus) {
-            setFocus({ ...focus, itemFocus: itemFocus - 1 });
-        }
-    }
-
-
-    return (<Container fluid >
-            <Scrollspy currentClassName="selected">
-        <Row>
-            <h3 id={"title"} style={{ margin: "0 auto" }}>{`${itemFocus} + ${itemFocus + 6}`}</h3>
-        </Row>
-
-        <div className="scrollmenu d-flex align-items-center">
-            {menuItems.map((element, index) => <MovieCard id={index} class={`${menuFocus ? `${index === itemFocus ? "selected" : ""}` : ""}`} />)}
-        </div>
-            </Scrollspy>
-    </Container>);
+        </Container>
+    );
 }
 
 export default MenuSlider;
