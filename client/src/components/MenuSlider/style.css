@@ -1,14 +1,15 @@
 div.scrollmenu {
-  background-color: #333;
+  background-color: transparent;
   overflow-x: hidden;
   overflow-y: hidden;
   white-space: nowrap;
   height:60vh;
+  clear: both;
 }
-div.scrollmenu h3 {
-  position: sticky;
-  top: 0;
-}
+.SliderMenu h3 {
+  padding-top:2vh;
+  color:white;
+} 
 
 
   

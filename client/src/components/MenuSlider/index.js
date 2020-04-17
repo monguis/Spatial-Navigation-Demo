@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col } from 'react-bootstrap';
+import React from "react";
+import { Container, Row} from 'react-bootstrap';
 import MovieCard from "../MovieCard/"
 import "./style.css";
 

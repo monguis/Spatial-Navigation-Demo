@@ -1,6 +1,6 @@
 .selectedItem {
-    transform: scale(1.1);
-    border: white,20px,solid;
+    transform: scale(1.05);
+    filter: drop-shadow( 0 0 10px #11ffea);
 }
 
 .selectableWrapper{
@@ -8,7 +8,6 @@
     display: inline-block;
     margin-left:10px;
     transition: all 0.2s ease-in-out;
-    width:20vw;
     margin:0;
 }
 
