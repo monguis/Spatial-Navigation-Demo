@@ -13,7 +13,7 @@ const MenuSlider = (props) => {
                 <h3 style={{ margin: "0 auto" }}>{category}</h3>
             </Row>
             <div className="scrollmenu d-flex align-items-center">
-                {items.map((element, index) => <MovieCard src={element.Poster} id={`${index},${row}`} />)}
+                {items.map((element, index) => <MovieCard src={element.Poster} imdb={element.imdbID} key={`${index},${row}`} id={`${index},${row}`} />)}
             </div>
         </Container>
     );

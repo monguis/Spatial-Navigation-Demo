@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import API from "../../utilities/API";
 import { Container } from "react-bootstrap"
 import MenuSlider from "../../components/MenuSlider";
 import useEventListener from '../../utilities/useEventListener';
+import MovieInfo from "../MovieInfo/";
 import "./style.css";
-import MovieInfo from "../MovieInfo/"
 
 
 
@@ -47,11 +47,11 @@ import MovieInfo from "../MovieInfo/"
 // }
 
 
-
-const Home = (props) => {
-
-  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], redirect: false, favorites: [], favIndex: [] })
-
+const Home = () => {
+ 
+  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], redirect: false })
+  
+  // console.log(useContext(ColorContext));
 
   useEffect(() => {
     API.getMovies().then(({ data }) => {
@@ -73,7 +73,7 @@ const Home = (props) => {
 
   }, [menu])
 
-  const { selected, menuGrid, previous, favorites, favIndex } = menu
+  const { selected, menuGrid, previous } = menu
 
   const validKeys = ['ArrowDown', 37, "ArrowUp", 38, "ArrowRight", 39, "ArrowLeft", 40, 13, "Enter", "Escape", 27];
 
@@ -97,9 +97,7 @@ const Home = (props) => {
         case "Enter":
           if (!menu.redirect) {
             setMenu({ ...menu, redirect: true })
-          } else {
-            toggleFavorite();
-          }
+          } 
           break;
         case "Escape":
           backToMenu()

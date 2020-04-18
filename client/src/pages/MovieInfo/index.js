@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { Container, Row, Col, Image } from 'react-bootstrap';
-
+import { FavoriteContext } from "../../utilities/FavoriteContext"
 const MovieInfo = (props) => {// 1000 picture width
 
     console.log(props.movie)
 
     const { movie } = props;
+    const {favorites,setFavorites} = useContext(FavoriteContext);
+
     // console.log(p.replace(regex, 'ferret'));
     useEffect(() => {
         console.log("Holi");
@@ -14,7 +16,7 @@ const MovieInfo = (props) => {// 1000 picture width
         <Container fluid>
             <Row>
                 <Col xs={4}>
-                    <Image src={movie.Poster.replace("SX300.jpg","SX1000.jpg")} fluid />
+                    <Image src={movie.Poster.replace("SX300.jpg", "SX1000.jpg")} fluid />
                 </Col>
                 <Col>
                     <h1>{movie.Title}</h1>
