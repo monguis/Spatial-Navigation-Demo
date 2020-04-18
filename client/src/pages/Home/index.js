@@ -12,7 +12,7 @@ import "./style.css";
 
 const Home = () => {
 
-  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], redirect: false })
+  const [menu, setMenu] = useState({ selected: { x: 1, y: 0 }, previous: { x: 1, y: 0 }, menuGrid: [], redirect: false })
 
   //  const sortedMovies = (relevance) => {
   //     let auxArr;
@@ -36,34 +36,44 @@ const Home = () => {
   }
 
   const createCategories = (movies, categoriesArray) => {
-    movies.forEach(element => {
-      categoriesArray.forEach(e => {
-        if (element[e.keyToCheck].includes(e.condition)) {
-          e.items.push(element)
-          return;
+    movies.forEach(movie => {
+      for (const category of categoriesArray) {
+        let match = false;
+        
+        for (const condition of category.conditions.split(", ")) {
+          match = movie[category.keyToCheck].includes(condition);
+          if (!match)
+            break;
+        };
+        
+        if (match) {
+          category.items.push(movie);
+          if (!category.allowRedundancy) {
+            break;
+          }
         }
-      })
+
+      }
     });
   };
   // [{title:"2019 Top Movies",keyToCheck:"Year",condition:"2019",items:[]},
   // {title:"2018 Top Movies",keyToCheck:"Year",condition:"2018",items:[]}];
- 
+
   const menuToLoad = [
-    { title: "Top of 2019", keyToCheck: "Year", condition: "2019", items: [] },
-    { title: "Top of 2018", keyToCheck: "Year", condition: "2018", items: [] },
-    { title: "Mystery Drama", keyToCheck: "Genre", condition: "Mystery", items: [] },
-    { title: "Action", keyToCheck: "Genre", condition: "Action", items: [] },
-    { title: "Fantasy", keyToCheck: "Genre", condition: "Fantasy", items: [] },
-    { title: "Thriller", keyToCheck: "Genre", condition: "Thriller", items: [] }
+    { title: "Top of 2019", keyToCheck: "Year", conditions: "2019", items: [], allowRedundancy: true },
+    { title: "Top of 2018", keyToCheck: "Year", conditions: "2018", items: [], allowRedundancy: true },
+    { title: "Mystery Drama", keyToCheck: "Genre", conditions: "Mystery, Drama", items: [], allowRedundancy: true  },
+    { title: "Action", keyToCheck: "Genre", conditions: "Action", items: [] },
+    { title: "Fantasy", keyToCheck: "Genre", conditions: "Fantasy", items: [] },
+    { title: "Thriller", keyToCheck: "Genre", conditions: "Thriller", items: [] }
   ]
   useEffect(() => {
 
     API.getMovies().then(({ data }) => {
-
       data.sort(sortByRelevance);
       createCategories(data, menuToLoad);
       setMenu({ ...menu, menuGrid: menuToLoad });
-      window.location.hash = "#" + 0 + "," + selected.y;
+      window.location.hash = "#" + 1 + "," + selected.y;
       window.location.hash = "#row" + selected.y;
     });
   }, [])
@@ -72,8 +82,8 @@ const Home = () => {
     if (menuGrid.length > 0 && !menu.redirect) {
       console.log(previous)
       console.log(selected)
-      document.getElementById(0 + "," + previous.y).classList.remove("selectedItem");
-      document.getElementById(0 + "," + selected.y).classList.add("selectedItem");
+      document.getElementById(1 + "," + previous.y).classList.remove("selectedItem");
+      document.getElementById(1 + "," + selected.y).classList.add("selectedItem");
       window.location.hash = "#" + selected.x + "," + selected.y;
       window.location.hash = "#row" + selected.y;
     }
