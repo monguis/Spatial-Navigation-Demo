@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import API from "../../utilities/API";
 import { Container } from "react-bootstrap"
 import MenuSlider from "../../components/MenuSlider";
@@ -11,42 +11,58 @@ import "./style.css";
 // here we sort movies based on an attribute that we considered the most relevant
 
 const Home = () => {
- 
+
   const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], redirect: false })
-  
-//  const sortedMovies = (relevance) => {
-//     let auxArr;
-//     API.getMovies().then(({ data }) => {
-//       if (data[0][relevance]) {
-//         if (+data[0][relevance]) {
-//           auxArr = data.sort((a, b) => b[relevance] - a[relevance]);
-//         } else {
-//           auxArr = data.sort((a, b) => b[relevance] < a[relevance]);
-//         }
-//         console.log(auxArr);
-//       } else{ 
-//         console.log("Movies can't be sorted by that attribute");
-//     }
-//     });
-//   }
+
+  //  const sortedMovies = (relevance) => {
+  //     let auxArr;
+  //     API.getMovies().then(({ data }) => {
+  //       if (data[0][relevance]) {
+  //         if (+data[0][relevance]) {
+  //           auxArr = data.sort((a, b) => b[relevance] - a[relevance]);
+  //         } else {
+  //           auxArr = data.sort((a, b) => b[relevance] < a[relevance]);
+  //         }
+  //         console.log(auxArr);
+  //       } else{ 
+  //         console.log("Movies can't be sorted by that attribute");
+  //     }
+  //     });
+  //   }
   // ["Top of 2019","Top of 2018","Mystery ","Drama","Action","Fantasy","Thriller"]
 
-const sortByRelevance = (a,b) =>{
-  return (parseFloat(b.imdbVotes)*parseFloat(b.imdbRating))-(parseFloat(a.imdbVotes)*parseFloat(a.imdbRating))
-}
+  const sortByRelevance = (a, b) => {
+    return (parseFloat(b.imdbVotes) * parseFloat(b.imdbRating)) - (parseFloat(a.imdbVotes) * parseFloat(a.imdbRating))
+  }
 
-const createCategories = (movies, categoriesArray)=>{
-  // let result = categoriesArray.map(({title})=>({name:title,items:[]}));
-  movies.map((movie)=>{
-
-
-  })
-}
-
+  const createCategories = (movies, categoriesArray) => {
+    movies.forEach(element => {
+      categoriesArray.forEach(e => {
+        if (element[e.keyToCheck].includes(e.condition)) {
+          e.items.push(element)
+          return;
+        }
+      })
+    });
+  };
+  // [{title:"2019 Top Movies",keyToCheck:"Year",condition:"2019",items:[]},
+  // {title:"2018 Top Movies",keyToCheck:"Year",condition:"2018",items:[]}];
+ 
+  const menuToLoad = [
+    { title: "Top of 2019", keyToCheck: "Year", condition: "2019", items: [] },
+    { title: "Top of 2018", keyToCheck: "Year", condition: "2018", items: [] },
+    { title: "Mystery Drama", keyToCheck: "Genre", condition: "Mystery", items: [] },
+    { title: "Action", keyToCheck: "Genre", condition: "Action", items: [] },
+    { title: "Fantasy", keyToCheck: "Genre", condition: "Fantasy", items: [] },
+    { title: "Thriller", keyToCheck: "Genre", condition: "Thriller", items: [] }
+  ]
   useEffect(() => {
+
     API.getMovies().then(({ data }) => {
+
       data.sort(sortByRelevance);
-      setMenu({ ...menu, menuGrid: [{ title: "array 1", items: data.slice(0, 11) }, { title: "array 2", items: data.slice(21, 31) }, { title: "array 3", items: data.slice(31, 41) }] });
+      createCategories(data, menuToLoad);
+      setMenu({ ...menu, menuGrid: menuToLoad });
       window.location.hash = "#" + 0 + "," + selected.y;
       window.location.hash = "#row" + selected.y;
     });
@@ -87,7 +103,7 @@ const createCategories = (movies, categoriesArray)=>{
         case "Enter":
           if (!menu.redirect) {
             setMenu({ ...menu, redirect: true })
-          } 
+          }
           break;
         case "Escape":
           backToMenu()
