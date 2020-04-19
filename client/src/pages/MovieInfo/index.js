@@ -1,17 +1,19 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { Container, Row, Col, Image } from 'react-bootstrap';
-import { FavoriteContext } from "../../utilities/FavoriteContext"
-const MovieInfo = (props) => {// 1000 picture width
 
-    console.log(props.movie)
+const MovieInfo = (props) => {
 
     const { movie } = props;
-    const {favorites,setFavorites} = useContext(FavoriteContext);
 
-    // console.log(p.replace(regex, 'ferret'));
-    useEffect(() => {
-        console.log("Holi");
-    }, [])
+    const [ favorited, setFavorited] = useState(false);
+    
+    // useEffect(() => {
+    //     setFavorited(favorites.includes(movie.imdbID));
+    //     return () => {
+    //         console.log("dismount")
+    //     }
+    // }, []);
+
     return (
         <Container fluid>
             <Row>
@@ -21,7 +23,7 @@ const MovieInfo = (props) => {// 1000 picture width
                 <Col>
                     <h1>{movie.Title}</h1>
                     <h3>{`${movie.Genre}, ${movie.Released}, ${movie.Runtime}, ${movie.imdbRating}, ${movie.Rated}`} </h3>
-                    <button>favorited?</button>
+                    <div className="favorited" >{favorited ? <i className="fas fa-heart"></i> : <i className="far fa-heart"></i>}</div>
                     <br></br><br></br><br></br>
                     <h3>Plot</h3>
                     <p>{movie.Plot}</p>

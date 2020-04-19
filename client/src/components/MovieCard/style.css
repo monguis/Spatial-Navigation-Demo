@@ -11,6 +11,11 @@
     margin:0;
 }
 
+.selectableWrapper img{
+    height:43vh;
+    border-radius: 1%;
+}
+
 .favorited {
     position: absolute;
     top:0.2vw;
@@ -18,4 +23,5 @@
     text-align: center;
     color:red;
 }
+
 

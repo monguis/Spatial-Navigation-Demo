@@ -3,12 +3,17 @@ div.scrollmenu {
   overflow-x: hidden;
   overflow-y: hidden;
   white-space: nowrap;
-  height:60vh;
+  height:52vh;
   clear: both;
 }
 .SliderMenu h3 {
   padding-top:2vh;
+  padding-bottom:0;
   color:white;
+} 
+
+.SliderMenu{
+  height:57vh;
 } 
 
 
