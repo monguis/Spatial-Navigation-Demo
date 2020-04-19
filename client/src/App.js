@@ -1,13 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import MovieInfo from "./pages/MovieInfo";
 import { FavoriteContext } from "./utilities/FavoriteContext";
-
+// import API from "../../utilities/API";
 
 const App = () => {
+
+  const menuToLoad = [
+    { title: "Top of 2019", keyToCheck: "Year", conditions: "2019", items: [], allowRedundancy: true },
+    { title: "Top of 2018", keyToCheck: "Year", conditions: "2018", items: [], allowRedundancy: true },
+    { title: "Mystery Drama", keyToCheck: "Genre", conditions: "Mystery, Drama", items: [], allowRedundancy: true },
+    { title: "Action", keyToCheck: "Genre", conditions: "Action", items: [] },
+    { title: "Fantasy", keyToCheck: "Genre", conditions: "Fantasy", items: [] },
+    { title: "Thriller", keyToCheck: "Genre", conditions: "Thriller", items: [] }
+  ];
 
   const [favorites, setFavorites] = useState([])
 
@@ -20,27 +27,20 @@ const App = () => {
     }
   }
 
-  const addFavorite = (id) => {
-    if (favorites.indexOf(id) === -1) {
+  const addFavorite = (movie) => {
+    console.log(favorites.length);
+    if (favorites.indexOf(movie) === -1) {
       let auxArr = favorites;
-      auxArr.push(id)
+      auxArr.push(movie)
       setFavorites(auxArr);
+      console.log(favorites)
     }
   }
 
   return (
     <>
       <FavoriteContext.Provider value={{ favorites, addFavorite, removeFavorite }}>
-        <Router  >
-          <Switch>
-            <Route exact path={["/", "/home"]}>
-              <Home />
-            </Route>
-            <Route exact path={["/movie"]}>
-              <MovieInfo />
-            </Route>
-          </Switch>
-        </Router>
+              <Home menuToLoad={menuToLoad} data ={[]}/>
       </FavoriteContext.Provider>
       {/* <Test></Test> */}
     </>

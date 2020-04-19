@@ -15,7 +15,7 @@ const MenuSlider = (props) => {
                 </Col>
             </Row>
             <div className="scrollmenu d-flex align-items-center">
-                {items.map((element, index) => <MovieCard src={element.Poster} imdb={element.imdbID} key={`${index},${row}`} id={`${index},${row}`} />)}
+                {items.map((element, index) => <MovieCard src={element.Poster} movie={element} key={`${index},${row}`} id={`${index},${row}`} />)}
             </div>
         </Container>
     );
