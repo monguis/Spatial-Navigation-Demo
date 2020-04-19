@@ -3,7 +3,6 @@ import "./App.css";
 import Home from "./pages/Home";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FavoriteContext } from "./utilities/FavoriteContext";
-// import API from "../../utilities/API";
 
 const App = () => {
 

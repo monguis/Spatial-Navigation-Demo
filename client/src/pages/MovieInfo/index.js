@@ -1,35 +1,29 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext } from "react";
 import { Container, Row, Col, Image } from 'react-bootstrap';
 import { FavoriteContext } from "../../utilities/FavoriteContext";
+import "./style.css";
+
 const MovieInfo = (props) => {
 
     const { movie } = props;
 
-    const { favorites, removeFavorite, addFavorite } = useContext(FavoriteContext);
+    const { favorites } = useContext(FavoriteContext);
 
-    const [faved,setFaved] = useState()
-
-    useEffect(() => {
-        setFaved(favorites.includes(movie))
-        console.log("howdy");
-    }, [favorites]);
-
-    useEffect(() => {
-        setFaved(favorites.includes(movie))
-        console.log("first");
-    }, []);
 
     return (
-        <Container fluid>
+        <Container fluid className="infoContainer">
             <Row>
                 <Col xs={4}>
-                    <Image src={movie.Poster.replace("SX300.jpg", "SX1000.jpg")} fluid />
+                    <div className="moviePictureWrapper">
+                        <Image src={movie.Poster.replace("SX300.jpg", "SX1200.jpg")} fluid />
+                    </div>
                 </Col>
-                <Col>
+                <Col className="movieTextInfo">
                     <h1>{movie.Title}</h1>
-                    <h3>{`${movie.Genre}, ${movie.Released}, ${movie.Runtime}, ${movie.imdbRating}, ${movie.Rated}`} </h3>
-                    <div className="favorited" >{faved? <i className="fas fa-heart"></i> : <i className="far fa-heart"></i>}</div>
-                    <br></br><br></br><br></br>
+                    <h3><span>{`${movie.Genre}`}</span> &middot; {`${movie.Released}`} &middot; {`${movie.Runtime}`} &middot;{` ${movie.imdbRating}`} &middot; {`${movie.Rated}`} </h3>
+                    <br></br>
+                    <div className="faved" >{favorites.includes(movie) ? <i className="fas fa-heart"></i> : <i className="far fa-heart"></i>}</div>
+                    <br></br>
                     <h3>Plot</h3>
                     <p>{movie.Plot}</p>
                     <h3>Directed by:</h3>
