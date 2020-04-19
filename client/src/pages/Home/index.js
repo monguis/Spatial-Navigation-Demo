@@ -12,7 +12,7 @@ import "./style.css";
 
 const Home = (props) => {
 
-  const [menu, setMenu] = useState({ selected: { x: 1, y: 0 }, previous: { x: 1, y: 0 }, menuGrid: [], favMenu: { title: "Favorites", items: [] }, redirect: false })
+  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], favMenu: { title: "Favorites", items: [] }, redirect: false })
   const { favorites, addFavorite, removeFavorite } = useContext(FavoriteContext);
   const { selected, menuGrid, previous } = menu
 
@@ -40,8 +40,8 @@ const Home = (props) => {
 
   useEffect(() => {
     if (menuGrid.length > 0 && !menu.redirect) {
-      document.getElementById(1 + "," + previous.y).classList.remove("selectedItem");
-      document.getElementById(1 + "," + selected.y).classList.add("selectedItem");
+      document.getElementById(0 + "," + previous.y).classList.remove("selectedItem");
+      document.getElementById(0 + "," + selected.y).classList.add("selectedItem");
       window.location.hash = "#" + selected.x + "," + selected.y;
       window.location.hash = "#row" + selected.y;
     }
@@ -143,6 +143,8 @@ const Home = (props) => {
       let auxArr = menuGrid;
       auxArr[selected.y].items.push(auxArr[selected.y].items.shift());
       setMenu({ ...menu, array: auxArr });
+    } else if(menuGrid[selected.y].items.length===2){
+      moveBack();
     }
   }
 
@@ -180,7 +182,7 @@ const Home = (props) => {
 
         <Container fluid>
 
-          <MovieInfo movie={menuGrid[selected.y].items[selected.x]} toggleFavorite={toggleFavorite} />
+          <MovieInfo movie={menuGrid[selected.y].items[0]} toggleFavorite={toggleFavorite} />
 
         </Container>)
 

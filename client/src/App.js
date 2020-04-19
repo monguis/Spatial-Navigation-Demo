@@ -27,22 +27,17 @@ const App = () => {
   }
 
   const addFavorite = (movie) => {
-    console.log(favorites.length);
     if (favorites.indexOf(movie) === -1) {
       let auxArr = favorites;
       auxArr.push(movie)
       setFavorites(auxArr);
-      console.log(favorites)
     }
   }
 
   return (
-    <>
       <FavoriteContext.Provider value={{ favorites, addFavorite, removeFavorite }}>
-              <Home menuToLoad={menuToLoad} data ={[]}/>
+              <Home menuToLoad={menuToLoad}/>
       </FavoriteContext.Provider>
-      {/* <Test></Test> */}
-    </>
   );
 }
 export default App;

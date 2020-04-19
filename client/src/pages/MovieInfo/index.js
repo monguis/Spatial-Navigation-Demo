@@ -15,7 +15,7 @@ const MovieInfo = (props) => {
             <Row>
                 <Col xs={4}>
                     <div className="moviePictureWrapper">
-                        <Image src={movie.Poster.replace("SX300.jpg", "SX1200.jpg")} fluid />
+                        <Image src={movie.Poster.replace("SX300.jpg", "SX1000.jpg")} fluid />
                     </div>
                 </Col>
                 <Col className="movieTextInfo">
