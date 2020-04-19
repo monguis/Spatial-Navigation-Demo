@@ -12,58 +12,46 @@ import "./style.css";
 
 const Home = () => {
 
-  const [menu, setMenu] = useState({ selected: { x: 1, y: 0 }, previous: { x: 1, y: 0 }, menuGrid: [], redirect: false })
-  const { favorites, setFavorites } = useContext(FavoriteContext);
+  const [menu, setMenu] = useState({ selected: { x: 1, y: 0 }, previous: { x: 1, y: 0 }, menuGrid: [], favMenu: { title: "Favorites", items: [] }, redirect: false })
+  const { favorites, addFavorite, removeFavorite } = useContext(FavoriteContext);
+  const { selected, menuGrid, previous, favMenu } = menu
 
-
-  const sortByRelevance = (a, b) => {
-    return (parseFloat(b.imdbVotes) * parseFloat(b.imdbRating)) - (parseFloat(a.imdbVotes) * parseFloat(a.imdbRating))
-  }
-
-  const createCategories = (movies, categoriesArray) => {
-    movies.forEach(movie => {
-      for (const category of categoriesArray) {
-        let match = false;
-
-        for (const condition of category.conditions.split(", ")) {
-          match = movie[category.keyToCheck].includes(condition);
-          if (!match)
-            break;
-        };
-
-        if (match) {
-          category.items.push(movie);
-          if (!category.allowRedundancy) {
-            break;
-          }
-        }
-
-      }
-    });
-  };
+  const validKeys = ['ArrowDown', 37, "ArrowUp", 38, "ArrowRight", 39, "ArrowLeft", 40, 13, "Enter", "Escape", 27];
 
   const menuToLoad = [
     { title: "Top of 2019", keyToCheck: "Year", conditions: "2019", items: [], allowRedundancy: true },
     { title: "Top of 2018", keyToCheck: "Year", conditions: "2018", items: [], allowRedundancy: true },
-    { title: "Mystery Drama", keyToCheck: "Genre", conditions: "Mystery, Drama", items: [], allowRedundancy: true },
+    { title: "Mystery Drama", keyToCheck: "Genre", conditions: "Myster  y, Drama", items: [], allowRedundancy: true },
     { title: "Action", keyToCheck: "Genre", conditions: "Action", items: [] },
     { title: "Fantasy", keyToCheck: "Genre", conditions: "Fantasy", items: [] },
     { title: "Thriller", keyToCheck: "Genre", conditions: "Thriller", items: [] }
-  ]
-  useEffect(() => {
+  ];
 
+  //useEffect section:
+
+  useEffect(() => {
     API.getMovies().then(({ data }) => {
       data.sort(sortByRelevance);
-      createCategories(data, menuToLoad);
-      setMenu({ ...menu, menuGrid: menuToLoad });
+      let auxFavMenu = { title: "Favorites", items: [] };
+      createCategories(data, menuToLoad, auxFavMenu);
+      console.log(auxFavMenu)
+      setMenu({ ...menu, menuGrid: menuToLoad, favMenu: auxFavMenu });
       window.location.hash = "#" + 1 + "," + selected.y;
       window.location.hash = "#row" + selected.y;
     });
-
     return () => {
-      console.log("menu kisses bye")
     };
   }, [])
+
+  useEffect(() => {
+    if (favorites.length !== favMenu.items.length) {
+      console.log(favMenu.items);
+      console.log(favorites);
+      console.log("fakob");
+
+      setMenu({ ...menu, favMenu: { ...favMenu, items: [] } })
+    }
+  }, [favorites])
 
   useEffect(() => {
     if (menuGrid.length > 0 && !menu.redirect) {
@@ -72,12 +60,38 @@ const Home = () => {
       window.location.hash = "#" + selected.x + "," + selected.y;
       window.location.hash = "#row" + selected.y;
     }
-
   }, [menu])
 
-  const { selected, menuGrid, previous } = menu
+  //functions section:
 
-  const validKeys = ['ArrowDown', 37, "ArrowUp", 38, "ArrowRight", 39, "ArrowLeft", 40, 13, "Enter", "Escape", 27];
+  const sortByRelevance = (a, b) => {
+    return (parseFloat(b.imdbVotes) * parseFloat(b.imdbRating)) - (parseFloat(a.imdbVotes) * parseFloat(a.imdbRating))
+  }
+
+  const createCategories = (movies, categoriesArray, favIndex) => {
+    movies.forEach(movie => {
+      if (favorites.includes(movie.imdbID)) {
+        console.log("entered")
+        favIndex.items.push(movie);
+      }
+      for (const category of categoriesArray) {
+        let match = false;
+
+        for (const condition of category.conditions.split(", ")) {
+          match = movie[category.keyToCheck].includes(condition);
+          if (!match)
+            break;
+        }
+
+        if (match) {
+          category.items.push(movie);
+          if (!category.allowRedundancy) {
+            break;
+          }
+        }
+      }
+    });
+  };
 
   function handler(event) {
     const { key } = event;
@@ -123,24 +137,22 @@ const Home = () => {
 
   useEventListener('keydown', handler);
 
-
-
   const moveUp = () => {
-    if (selected.y > 0) {
+    if (document.getElementById("row" + (selected.y)).previousElementSibling) {
       setMenu({
         ...menu,
         previous: selected,
-        selected: { ...selected, y: selected.y - 1 }
+        selected: { ...selected, y: document.getElementById("row" + (selected.y)).previousElementSibling.id.replace("row", "") }
       })
     }
   }
 
   const moveDown = () => {
-    if (document.getElementById((selected.x) + "," + (selected.y + 1))) {
+    if (document.getElementById("row" + (selected.y)).nextElementSibling) {
       setMenu({
         ...menu,
         previous: selected,
-        selected: { ...selected, y: selected.y + 1 }
+        selected: { ...selected, y: document.getElementById("row" + (selected.y)).nextElementSibling.id.replace("row", "") }
       })
     }
   }
@@ -165,7 +177,7 @@ const Home = () => {
 
   const toggleFavorite = () => {
     const favIndex = favorites.indexOf(menuGrid[selected.y].items[selected.x].imdbID);
-    if (favIndex!==-1) {
+    if (favIndex !== -1) {
       console.log(favIndex)
     }
 
@@ -187,9 +199,11 @@ const Home = () => {
 
           <Container fluid>
 
-            {menuGrid.map((el, row) => <MenuSlider items={el.items} category={el.title} row={row} />)}
-
+            {menuGrid.map((el, row) => el.items.length > 0 ? <MenuSlider items={el.items} category={el.title} row={row} /> : "")}
+            {favMenu.items.length > 0 ? <MenuSlider items={favMenu.items} category={favMenu.title} row={menuGrid.length} /> : ""}
           </Container>)}
+      <button onClick={()=>{removeFavorite("tt6751668")} }>no Fav</button>
+      <button onClick={ ()=>addFavorite("tt6751668") }>yes Fav</button>
     </>
   )
 
