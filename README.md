@@ -65,6 +65,9 @@ This page displays details about a selected movie. You will see a heart icon tha
 * HTML
 * CSS
 * Bootstrap (React and Vanilla CSS)
+* Font Awesome for Icons
+* Google Fonts
+* Axios (Http Requests)
 
 # Authors
 
