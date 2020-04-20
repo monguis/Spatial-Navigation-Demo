@@ -8,11 +8,11 @@ import { FavoriteContext } from "../../utilities/FavoriteContext";
 import "./style.css";
 
 
-// here we sort movies based on an attribute that we considered the most relevant
+
 
 const Home = (props) => {
 
-  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], favMenu: { title: "Favorites", items: [] }, redirect: false })
+  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], gridStack: [], favMenu: { title: "Favorites", items: [] }, redirect: false })
   const { favorites, addFavorite, removeFavorite } = useContext(FavoriteContext);
   const { selected, menuGrid, previous } = menu
 
@@ -24,19 +24,21 @@ const Home = (props) => {
 
   //useEffect section:
 
+  // this use effect runs when this component is invoked, here the component makes a http request that sends all movies, then movies are sorted 
+  // and classify in their respective shelves, also set the attention to the first element of the dom
   useEffect(() => {
     API.getMovies().then(({ data }) => {
       data.sort(sortByRelevance);
       createCategories(data, menuToLoad);
-      setMenu({ ...menu, menuGrid: [...menuToLoad, { title: "Favorites", items: [] }] });
-      window.location.hash = "#" + 1 + "," + selected.y;
+      setMenu({ ...menu, menuGrid: [...menuToLoad, { title: "Favorites", items: [] }],gridStack:[...menuToLoad.map(stack =>[]),[]] });
+      window.location.hash = "#" + 0 + "," + selected.y;
       window.location.hash = "#row" + selected.y;
     });
     return () => {
     };
   }, [])
 
-
+  // this useEffect runs every time our state changes sending attention to the right element in the DOM
 
   useEffect(() => {
     if (menuGrid.length > 0 && !menu.redirect) {
@@ -49,10 +51,18 @@ const Home = (props) => {
 
   //functions section:
 
+
+  // here we sort movies based on an attribute that we considered the most relevant, I based this by multiplying imdbVotes
+  // with the imdbRating
   const sortByRelevance = (a, b) => {
     return (parseFloat(b.imdbVotes) * parseFloat(b.imdbRating)) - (parseFloat(a.imdbVotes) * parseFloat(a.imdbRating))
   }
 
+
+  // once we got our movies sorted we classify them with this function. The function takes an array of objects and each 
+  //object contains a title which is the name of the shelf, an empty array, the key is looking to compare and and the value that
+  //the key has to contain to be valid, alternatively, each object can have an extra boolean attribute called allowRedundance that 
+  // prevents movies to be many times in the menu grid, this works on cascade so once you forbid redundance, movies won't repeat below
   const createCategories = (movies, categoriesArray) => {
     movies.forEach(movie => {
       for (const category of categoriesArray) {
@@ -73,6 +83,8 @@ const Home = (props) => {
       }
     });
   };
+
+  // here we call an events listener with that will handle keydown events
 
   function handler(event) {
     const { key } = event;
@@ -118,6 +130,9 @@ const Home = (props) => {
 
   useEventListener('keydown', handler);
 
+
+  //below you find the functions that manipulate the menu state
+
   const moveUp = () => {
     if (document.getElementById("row" + (selected.y)).previousElementSibling) {
       setMenu({
@@ -139,20 +154,20 @@ const Home = (props) => {
   }
 
   const moveForward = () => {
-    if (document.getElementById(`${2},${selected.y}`)) {
+    if (menuGrid[selected.y].items.length>1) {
       let auxArr = menuGrid;
-      auxArr[selected.y].items.push(auxArr[selected.y].items.shift());
-      setMenu({ ...menu, array: auxArr });
-    } else if(menuGrid[selected.y].items.length===2){
-      moveBack();
-    }
+      let auxArr2 = menu.gridStack;
+      auxArr2[selected.y].push(auxArr[selected.y].items.shift());
+      setMenu({ ...menu, menuGrid: auxArr ,gridStack:auxArr2});
+    } 
   }
 
   const moveBack = () => {
-    if (document.getElementById(`${0},${selected.y}`)) {
+    if (menu.gridStack[selected.y].length>0) {
       let auxArr = menuGrid;
-      auxArr[selected.y].items.unshift(auxArr[selected.y].items.pop());
-      setMenu({ ...menu, array: auxArr });
+      let auxArr2 = menu.gridStack;
+      auxArr[selected.y].items.unshift(auxArr2[selected.y].pop());
+      setMenu({ ...menu, menuGrid: auxArr ,gridStack:auxArr2});
     }
   }
 
@@ -177,7 +192,7 @@ const Home = (props) => {
 
   return (
     <>
-
+      {/* this component can render wether the info page of a movie or the menuGrid */}
       {menu.redirect ? (
 
         <Container fluid>
@@ -189,9 +204,9 @@ const Home = (props) => {
         : (
 
           <Container fluid>
-
+            {/* this component renders menu rows depending on the size of the menuGrid, is a row is empty, it wont be display */}
             {menuGrid.map((el, row) => el.items.length > 0 ? <MenuSlider items={el.items} category={el.title} row={row} /> : "")}
-            {/* {favorites.length > 0 ? <MenuSlider items={favorites} category={"Favorites"} row={menuGrid.length} /> : ""} */}
+
           </Container>)}
     </>
   )
