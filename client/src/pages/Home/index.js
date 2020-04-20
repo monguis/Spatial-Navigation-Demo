@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import API from "../../utilities/API";
 import { Container } from "react-bootstrap"
 import MenuSlider from "../../components/MenuSlider";
@@ -7,30 +7,29 @@ import MovieInfo from "../MovieInfo/";
 import { FavoriteContext } from "../../utilities/FavoriteContext";
 import "./style.css";
 
-
-
-
 const Home = (props) => {
 
-  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], gridStack: [], favMenu: { title: "Favorites", items: [] }, redirect: false })
+  //here we declare variables to use and desctructure props sent from app.js we also store the codes for valid keys;
+  const [menu, setMenu] = useState({ selected: { x: 0, y: 0 }, previous: { x: 0, y: 0 }, menuGrid: [], gridStack: [], favChaged: false, redirect: false })
   const { favorites, addFavorite, removeFavorite } = useContext(FavoriteContext);
-  const { selected, menuGrid, previous } = menu
+  const { selected, menuGrid, previous, favChaged } = menu
 
-  const validKeys = ['ArrowDown', 37, "ArrowUp", 38, "ArrowRight", 39, "ArrowLeft", 40, 13, "Enter", "Escape", 27];
+  const validKeys = ['ArrowDown', 37, "ArrowUp", 38, "ArrowRight", 39, "ArrowLeft", 40, "Enter", 13, "Escape", 27];
 
   const { menuToLoad } = props;
 
-
+  const movieRef = useRef(null)
 
   //useEffect section:
 
   // this use effect runs when this component is invoked, here the component makes a http request that sends all movies, then movies are sorted 
-  // and classify in their respective shelves, also set the attention to the first element of the dom
+  // and classify in their respective shelves, also set the attention to the first element of the dom, we also create an empty array to serve as
+  // buffer stack that way the app saves the items that have been discarded.
   useEffect(() => {
     API.getMovies().then(({ data }) => {
       data.sort(sortByRelevance);
       createCategories(data, menuToLoad);
-      setMenu({ ...menu, menuGrid: [...menuToLoad, { title: "Favorites", items: [] }],gridStack:[...menuToLoad.map(stack =>[]),[]] });
+      setMenu({ ...menu, menuGrid: [...menuToLoad, { title: "Favorites", items: [] }], gridStack: [...menuToLoad.map(stack => []), []] });
       window.location.hash = "#" + 0 + "," + selected.y;
       window.location.hash = "#row" + selected.y;
     });
@@ -42,10 +41,24 @@ const Home = (props) => {
 
   useEffect(() => {
     if (menuGrid.length > 0 && !menu.redirect) {
-      document.getElementById(0 + "," + previous.y).classList.remove("selectedItem");
-      document.getElementById(0 + "," + selected.y).classList.add("selectedItem");
-      window.location.hash = "#" + selected.x + "," + selected.y;
-      window.location.hash = "#row" + selected.y;
+      if (!document.getElementById(0 + "," + selected.y)) {
+        console.log(menu.gridStack[selected.y].length > 0 )
+        console.log(menuGrid[selected.y].items === 0 )
+        if (menu.gridStack[selected.y].length > 0 && menuGrid[selected.y].items.length === 0) {
+          let auxArr = menuGrid;
+          let auxArr2 = menu.gridStack;
+          auxArr[selected.y].items.unshift(auxArr2[selected.y].pop());
+          console.log(auxArr2[selected.y])
+          setMenu({ ...menu, menuGrid: auxArr, gridStack: auxArr2 });
+        } else {
+          setMenu({ ...menu, selected: { ...selected, y: selected.y - 1 } })
+        }
+      } else {
+        document.getElementById(0 + "," + previous.y).classList.remove("selectedItem");
+        document.getElementById(0 + "," + selected.y).classList.add("selectedItem");
+        window.location.hash = "#" + selected.x + "," + selected.y;
+        window.location.hash = "#row" + selected.y;
+      }
     }
   }, [menu])
 
@@ -59,7 +72,7 @@ const Home = (props) => {
   }
 
 
-  // once we got our movies sorted we classify them with this function. The function takes an array of objects and each 
+  // once we got our movies sorted we classify them with this function. The function takes an array of objects (sent throug props from app.js)and each 
   //object contains a title which is the name of the shelf, an empty array, the key is looking to compare and and the value that
   //the key has to contain to be valid, alternatively, each object can have an extra boolean attribute called allowRedundance that 
   // prevents movies to be many times in the menu grid, this works on cascade so once you forbid redundance, movies won't repeat below
@@ -115,7 +128,7 @@ const Home = (props) => {
             backToMenu()
             break;
           case "Enter":
-            toggleFavorite();
+            toggleFavorite()
             break;
           default:
             return;
@@ -154,60 +167,69 @@ const Home = (props) => {
   }
 
   const moveForward = () => {
-    if (menuGrid[selected.y].items.length>1) {
+    if (menuGrid[selected.y].items.length > 1) {
       let auxArr = menuGrid;
       let auxArr2 = menu.gridStack;
       auxArr2[selected.y].push(auxArr[selected.y].items.shift());
-      setMenu({ ...menu, menuGrid: auxArr ,gridStack:auxArr2});
-    } 
+      setMenu({ ...menu, menuGrid: auxArr, gridStack: auxArr2 });
+    }
   }
 
   const moveBack = () => {
-    if (menu.gridStack[selected.y].length>0) {
+    if (menu.gridStack[selected.y].length > 0) {
       let auxArr = menuGrid;
       let auxArr2 = menu.gridStack;
       auxArr[selected.y].items.unshift(auxArr2[selected.y].pop());
-      setMenu({ ...menu, menuGrid: auxArr ,gridStack:auxArr2});
+      setMenu({ ...menu, menuGrid: auxArr, gridStack: auxArr2 });
     }
   }
 
   const backToMenu = () => {
     if (menu.redirect) {
-      setMenu({ ...menu, redirect: false });
-    }
-  };
+      if (favChaged) {
+        addFavorite(menuGrid[selected.y].items[0]);
+      } else {
+        removeFavorite(menuGrid[selected.y].items[0]);
+      }
 
-  const toggleFavorite = () => {
-    if (!favorites.includes(menuGrid[selected.y].items[selected.x])) {
-      addFavorite(menuGrid[selected.y].items[selected.x]);
-
-    } else {
-      removeFavorite(menuGrid[selected.y].items[selected.x]);
     }
+
     let auxArr = menuGrid;
     auxArr[auxArr.length - 1].items = favorites;
-    setMenu({ ...menu, array: auxArr });
+    setMenu({ ...menu, redirect: false, favChanged: false, menuGrid: auxArr });
+  }
+
+  const toggleFavorite = () => {
+    if (movieRef.current.classList.contains("far")) { //true to false
+      movieRef.current.classList.replace("far", "fas");
+      setMenu({ ...menu, favChaged: true });
+    } else {
+      movieRef.current.classList.replace("fas", "far"); //false to true
+      setMenu({ ...menu, favChaged: false });
+    }
+
   }
 
 
   return (
     <>
+
       {/* this component can render wether the info page of a movie or the menuGrid */}
       {menu.redirect ? (
 
         <Container fluid>
 
-          <MovieInfo movie={menuGrid[selected.y].items[0]} toggleFavorite={toggleFavorite} />
+          <MovieInfo movie={menuGrid[selected.y].items[0]} inRef={movieRef} faved={!favorites.includes(menuGrid[selected.y].items[selected.x])} toggleFavorite={toggleFavorite} />
 
         </Container>)
 
         : (
-
           <Container fluid>
             {/* this component renders menu rows depending on the size of the menuGrid, is a row is empty, it wont be display */}
             {menuGrid.map((el, row) => el.items.length > 0 ? <MenuSlider items={el.items} category={el.title} row={row} /> : "")}
 
-          </Container>)}
+          </Container>
+        )}
     </>
   )
 

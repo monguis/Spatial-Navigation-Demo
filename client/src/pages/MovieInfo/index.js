@@ -5,7 +5,7 @@ import "./style.css";
 
 const MovieInfo = (props) => {
 
-    const { movie } = props;
+    const { movie ,inRef ,faved} = props;
 
     const { favorites } = useContext(FavoriteContext);
 
@@ -22,7 +22,7 @@ const MovieInfo = (props) => {
                     <h1>{movie.Title}</h1>
                     <h3><span>{`${movie.Genre}`}</span> &middot; {`${movie.Released}`} &middot; {`${movie.Runtime}`} &middot;{` ${movie.imdbRating}`} &middot; {`${movie.Rated}`} </h3>
                     <br></br>
-                    <div className="faved" >{favorites.includes(movie) ? <i className="fas fa-heart"></i> : <i className="far fa-heart"></i>}</div>
+                    <div className="faved" ><i ref={inRef} className={`${faved? "far":"fas"} fa-heart`}></i></div>
                     <br></br>
                     <h3>Plot</h3>
                     <p>{movie.Plot}</p>
