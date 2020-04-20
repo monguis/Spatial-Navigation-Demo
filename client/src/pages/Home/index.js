@@ -18,6 +18,9 @@ const Home = (props) => {
 
   const { menuToLoad } = props;
 
+
+  // I use this ref to have direct control of a heart icon directly inside movieInfo page, this helps me to have a better control when we
+  // update our favorites context
   const movieRef = useRef(null)
 
   //useEffect section:
@@ -37,18 +40,16 @@ const Home = (props) => {
     };
   }, [])
 
-  // this useEffect runs every time our state changes sending attention to the right element in the DOM
+  // // this useEffect runs every time our state changes sending attention to the right element in the DOM. If there is no valid tile
+  // this function will check for the next valid tile based on a few conditionals
 
   useEffect(() => {
     if (menuGrid.length > 0 && !menu.redirect) {
       if (!document.getElementById(0 + "," + selected.y)) {
-        console.log(menu.gridStack[selected.y].length > 0 )
-        console.log(menuGrid[selected.y].items === 0 )
         if (menu.gridStack[selected.y].length > 0 && menuGrid[selected.y].items.length === 0) {
           let auxArr = menuGrid;
           let auxArr2 = menu.gridStack;
           auxArr[selected.y].items.unshift(auxArr2[selected.y].pop());
-          console.log(auxArr2[selected.y])
           setMenu({ ...menu, menuGrid: auxArr, gridStack: auxArr2 });
         } else {
           setMenu({ ...menu, selected: { ...selected, y: selected.y - 1 } })
@@ -146,6 +147,8 @@ const Home = (props) => {
 
   //below you find the functions that manipulate the menu state
 
+  // this functions help to change our selectors, horizontal ones change the value on the state by popping or shifting arrays
+  // vertical ones select the row we are in based on the information generated in the dom
   const moveUp = () => {
     if (document.getElementById("row" + (selected.y)).previousElementSibling) {
       setMenu({
@@ -184,6 +187,9 @@ const Home = (props) => {
     }
   }
 
+// backToMenu is called every time we press escape inside the MovieInfo page, this function is responsible of checking if the user wants to
+// add a movie to favorites 
+
   const backToMenu = () => {
     if (menu.redirect) {
       if (favChaged) {
@@ -191,14 +197,15 @@ const Home = (props) => {
       } else {
         removeFavorite(menuGrid[selected.y].items[0]);
       }
-
     }
-
     let auxArr = menuGrid;
     auxArr[auxArr.length - 1].items = favorites;
     setMenu({ ...menu, redirect: false, favChanged: false, menuGrid: auxArr });
   }
 
+  //here we change the heart icon inside the movieInfo page and by doing that we tell the state if we want to manipulate our favorites array
+  // this also helps to have a better control of when we check to favorites,
+  // I use a ref inside movieInfo to have direct control of heart icon properties
   const toggleFavorite = () => {
     if (movieRef.current.classList.contains("far")) { //true to false
       movieRef.current.classList.replace("far", "fas");
@@ -226,7 +233,7 @@ const Home = (props) => {
         : (
           <Container fluid>
             {/* this component renders menu rows depending on the size of the menuGrid, is a row is empty, it wont be display */}
-            {menuGrid.map((el, row) => el.items.length > 0 ? <MenuSlider items={el.items} category={el.title} row={row} /> : "")}
+            {menuGrid.map((el, row) => el.items.length > 0 ? <MenuSlider items={el.items} category={el.title} row={row} key={`menuSlider-${row}`}/> : "")}
 
           </Container>
         )}

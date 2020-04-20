@@ -25,10 +25,6 @@
     color:red;
 }
 
-.true{
-    content: ;
-}
-
 .moviePictureWrapper{
     filter: drop-shadow( 0 0 10px white);
     max-width: 100%;
